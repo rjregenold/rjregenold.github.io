@@ -1,0 +1,543 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="UTF-8"><title>flappy</title><script type="text/javascript" src="C:\Users\rj\Documents\Code\flappy-pixel\.cabal-sandbox\i386-windows-ghc-7.6.3\Elm-0.11\elm-runtime.js"></script><script type="text/javascript">Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   _E = _N.Error.make(_elm),
+   _J = _N.JavaScript.make(_elm),
+   $moduleName = "Main";
+   var Basics = Elm.Basics.make(_elm);
+   var Color = Elm.Color.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Collage = Elm.Graphics.Collage.make(_elm);
+   var Graphics = Graphics || {};
+   Graphics.Element = Elm.Graphics.Element.make(_elm);
+   var Keyboard = Elm.Keyboard.make(_elm);
+   var List = Elm.List.make(_elm);
+   var Maybe = Elm.Maybe.make(_elm);
+   var Native = Native || {};
+   Native.Ports = Elm.Native.Ports.make(_elm);
+   var Prelude = Elm.Prelude.make(_elm);
+   var Random = Elm.Random.make(_elm);
+   var Signal = Elm.Signal.make(_elm);
+   var String = Elm.String.make(_elm);
+   var Text = Elm.Text.make(_elm);
+   var Time = Elm.Time.make(_elm);
+   var _op = {};
+   var updateScore = function (game) {
+      return function () {
+         var pipes$ = A2(List.map,
+         function (pipe) {
+            return _U.replace([["scored"
+                               ,pipe.scored || _U.cmp(pipe.x,
+                               0) < 0]],
+            pipe);
+         },
+         game.pipes);
+         var unscoredPipes = A2(List.filter,
+         function (pipe) {
+            return Basics.not(pipe.scored) && _U.cmp(pipe.x,
+            0) < 0;
+         },
+         game.pipes);
+         return _U.replace([["score"
+                            ,game.score + List.length(unscoredPipes)]
+                           ,["pipes",pipes$]],
+         game);
+      }();
+   };
+   var movePipes = function (t) {
+      return List.map(function (pipe) {
+         return _U.replace([["x"
+                            ,pipe.x + t * pipe.vx]],
+         pipe);
+      });
+   };
+   var checkNextPipe = F2(function (t,
+   game) {
+      return function () {
+         var $ = game.nextPipe;
+         var wait = function () {
+            switch ($.ctor)
+            {case "_Tuple2": return $._1;}
+            _E.Case($moduleName,
+            "on line 158, column 19 to 32");
+         }();
+         var wait$ = wait + t;
+         var addPipe = _U.cmp(wait$,
+         1.1) > 0;
+         return _U.replace([["nextPipe"
+                            ,{ctor: "_Tuple2"
+                             ,_0: addPipe
+                             ,_1: addPipe ? 0 : wait$}]],
+         game);
+      }();
+   });
+   var mkCollisionRect = F2(function (_v3,
+   _v4) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v3.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple4"
+                           ,_0: _v3._1 + _v4._1 / 2
+                           ,_1: _v3._0 + _v4._0 / 2
+                           ,_2: _v3._1 - _v4._1 / 2
+                           ,_3: _v3._0 - _v4._0 / 2};}
+                 _E.Case($moduleName,
+                 "on line 151, column 6 to 37");
+              }();}
+         _E.Case($moduleName,
+         "on line 151, column 6 to 37");
+      }();
+   });
+   var isCollision = F2(function (_v11,
+   _v12) {
+      return function () {
+         switch (_v12.ctor)
+         {case "_Tuple4":
+            return function () {
+                 switch (_v11.ctor)
+                 {case "_Tuple4":
+                    return _U.cmp(_v11._2,
+                      _v12._0) < 0 && (_U.cmp(_v11._0,
+                      _v12._2) > 0 && (_U.cmp(_v11._3,
+                      _v12._1) < 0 && _U.cmp(_v11._1,
+                      _v12._3) > 0));}
+                 _E.Case($moduleName,
+                 "on line 147, column 5 to 45");
+              }();}
+         _E.Case($moduleName,
+         "on line 147, column 5 to 45");
+      }();
+   });
+   var txt = function (f) {
+      return function ($) {
+         return Text.centered(f(Text.monospace(Text.color(Color.white)(Text.toText(Prelude.show($))))));
+      };
+   };
+   var square = function (x) {
+      return A2(Graphics.Collage.rect,
+      x,
+      x);
+   };
+   var Game = F5(function (a,
+   b,
+   c,
+   d,
+   e) {
+      return {_: {}
+             ,collide: c
+             ,flappy: a
+             ,nextPipe: d
+             ,pipes: b
+             ,score: e};
+   });
+   var Flappy = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,vx: b
+             ,vy: d
+             ,x: a
+             ,y: c};
+   });
+   var Pipe = F7(function (a,
+   b,
+   c,
+   d,
+   e,
+   f,
+   g) {
+      return {_: {}
+             ,bottomHeight: c
+             ,bottomOffsetY: d
+             ,scored: g
+             ,topHeight: e
+             ,topOffsetY: f
+             ,vx: b
+             ,x: a};
+   });
+   var Point = F2(function (a,b) {
+      return {_: {},x: a,y: b};
+   });
+   var pipeGreen = A3(Color.rgb,
+   84,
+   128,
+   33);
+   var dirtBrown = A3(Color.rgb,
+   222,
+   219,
+   148);
+   var groundGreen = A3(Color.rgb,
+   117,
+   192,
+   48);
+   var skyBlue = A3(Color.rgb,
+   74,
+   194,
+   206);
+   var flappySize = Basics.toFloat(30);
+   var halfFlappySize = flappySize / 2;
+   var renderFlappy = function (game) {
+      return function () {
+         var flappy = game.flappy;
+         return Graphics.Collage.move({ctor: "_Tuple2"
+                                      ,_0: flappy.x
+                                      ,_1: flappy.y})(Graphics.Collage.filled(Color.red)(square(flappySize)));
+      }();
+   };
+   var groundHeight = 30;
+   var dirtHeight = 97;
+   var allBottomHeight = dirtHeight + groundHeight;
+   var pipeGap = 120;
+   var $ = {ctor: "_Tuple2"
+           ,_0: 61
+           ,_1: 40},
+   pipeWidth = $._0,
+   pipeHeight = $._1;
+   var $ = {ctor: "_Tuple2"
+           ,_0: Basics.toFloat(pipeWidth)
+           ,_1: Basics.toFloat(pipeHeight)},
+   fPipeWidth = $._0,
+   fPipeHeight = $._1;
+   var isPipeCollision = F2(function (r,
+   pipe) {
+      return function () {
+         var collideTop = A2(isCollision,
+         r,
+         A2(mkCollisionRect,
+         {ctor: "_Tuple2"
+         ,_0: pipe.x
+         ,_1: pipe.topOffsetY},
+         {ctor: "_Tuple2"
+         ,_0: fPipeWidth
+         ,_1: pipe.topHeight}));
+         var collideBottom = A2(isCollision,
+         r,
+         A2(mkCollisionRect,
+         {ctor: "_Tuple2"
+         ,_0: pipe.x
+         ,_1: pipe.bottomOffsetY},
+         {ctor: "_Tuple2"
+         ,_0: fPipeWidth
+         ,_1: pipe.bottomHeight}));
+         return collideBottom || collideTop;
+      }();
+   });
+   var checkCollision = function (game) {
+      return function () {
+         var flappy = game.flappy;
+         var flappyColRect = A2(mkCollisionRect,
+         {ctor: "_Tuple2"
+         ,_0: flappy.x
+         ,_1: flappy.y},
+         {ctor: "_Tuple2"
+         ,_0: flappySize
+         ,_1: flappySize});
+         return _U.replace([["collide"
+                            ,List.any(Basics.id)(A2(List.map,
+                            isPipeCollision(flappyColRect),
+                            game.pipes))]],
+         game);
+      }();
+   };
+   var renderPipe = function (pipe) {
+      return Graphics.Collage.group(_J.toList([Graphics.Collage.move({ctor: "_Tuple2"
+                                                                     ,_0: pipe.x
+                                                                     ,_1: pipe.bottomOffsetY})(Graphics.Collage.filled(pipeGreen)(A2(Graphics.Collage.rect,
+                                              pipeWidth,
+                                              pipe.bottomHeight)))
+                                              ,Graphics.Collage.move({ctor: "_Tuple2"
+                                                                     ,_0: pipe.x
+                                                                     ,_1: pipe.topOffsetY})(Graphics.Collage.filled(pipeGreen)(A2(Graphics.Collage.rect,
+                                              pipeWidth,
+                                              pipe.topHeight)))]));
+   };
+   var $ = {ctor: "_Tuple2"
+           ,_0: 2
+           ,_1: 7},
+   pipeHeightMin = $._0,
+   pipeHeightMax = $._1;
+   var worldVx = -250.0;
+   var $ = {ctor: "_Tuple2"
+           ,_0: 800
+           ,_1: 683},
+   width = $._0,
+   height = $._1;
+   var $ = {ctor: "_Tuple2"
+           ,_0: Basics.toFloat(width)
+           ,_1: Basics.toFloat(height)},
+   fwidth = $._0,
+   fheight = $._1;
+   var $ = {ctor: "_Tuple2"
+           ,_0: fwidth / 2
+           ,_1: fheight / 2},
+   halfWidth = $._0,
+   halfHeight = $._1;
+   var groundOffsetY = 0 - halfHeight + groundHeight / 2 + dirtHeight;
+   var flappyMinY = 0 - halfHeight + halfFlappySize + allBottomHeight;
+   var gravity = F2(function (t,
+   flappy) {
+      return _U.cmp(flappy.y,
+      flappyMinY) > 0 ? _U.replace([["vy"
+                                    ,flappy.vy - t * 2050]],
+      flappy) : flappy;
+   });
+   var flappyMaxY = halfHeight - halfFlappySize;
+   var jump = F2(function (_v23,
+   flappy) {
+      return function () {
+         return _U.cmp(flappy.y,
+         flappyMaxY) > -1 ? _U.replace([["vy"
+                                        ,0]],
+         flappy) : _U.cmp(_v23.y,
+         0) > 0 ? _U.replace([["vy"
+                              ,400]],
+         flappy) : flappy;
+      }();
+   });
+   var physics = F2(function (t,
+   flappy) {
+      return function () {
+         var y = A2(Basics.min,
+         flappyMaxY,
+         A2(Basics.max,
+         flappyMinY,
+         flappy.y + t * flappy.vy));
+         var x = A2(Basics.min,
+         0,
+         flappy.x + t * flappy.vx);
+         return _U.replace([["x",x]
+                           ,["y",y]],
+         flappy);
+      }();
+   });
+   var updateFlappy = F3(function (t,
+   arrow,
+   game) {
+      return function () {
+         var f = function ($) {
+            return physics(t)(gravity(t)(jump(arrow)($)));
+         };
+         return _U.replace([["flappy"
+                            ,f(game.flappy)]],
+         game);
+      }();
+   });
+   var defaultFlappy = A4(Flappy,
+   0,
+   0 - worldVx,
+   halfHeight,
+   Basics.toFloat(0));
+   var game = {_: {}
+              ,collide: false
+              ,flappy: defaultFlappy
+              ,nextPipe: {ctor: "_Tuple2"
+                         ,_0: true
+                         ,_1: 0}
+              ,pipes: _J.toList([])
+              ,score: 0};
+   var cleanPipes = List.filter(function (pipe) {
+      return _U.cmp(pipe.x,
+      0 - halfWidth - pipeWidth) > 0;
+   });
+   var renderGround = Graphics.Collage.moveY(groundOffsetY)(Graphics.Collage.filled(groundGreen)(A2(Graphics.Collage.rect,
+   fwidth,
+   Basics.toFloat(groundHeight))));
+   var mkPipe = function (h) {
+      return function () {
+         var bottomHeight = Basics.toFloat(h * pipeHeight);
+         var bottomOffsetY = 0 - halfHeight + bottomHeight / 2 + allBottomHeight;
+         var topHeight = fheight - allBottomHeight - bottomHeight - pipeGap;
+         var topOffsetY = halfHeight - topHeight / 2;
+         var startX = halfWidth + pipeWidth;
+         return A7(Pipe,
+         startX,
+         worldVx,
+         bottomHeight,
+         bottomOffsetY,
+         topHeight,
+         topOffsetY,
+         false);
+      }();
+   };
+   var addPipe = F2(function (next,
+   game) {
+      return function () {
+         var $ = game.nextPipe;
+         var shouldAdd = function () {
+            switch ($.ctor)
+            {case "_Tuple2": return $._0;}
+            _E.Case($moduleName,
+            "on line 167, column 24 to 37");
+         }();
+         return Basics.fst(game.nextPipe) ? {ctor: "::"
+                                            ,_0: mkPipe(next)
+                                            ,_1: game.pipes} : game.pipes;
+      }();
+   });
+   var updatePipes = F3(function (t,
+   next,
+   game) {
+      return _U.replace([["pipes"
+                         ,function ($) {
+                            return cleanPipes(movePipes(t)(addPipe(next)($)));
+                         }(game)]],
+      game);
+   });
+   var runGame = function (_v28) {
+      return function () {
+         switch (_v28.ctor)
+         {case "_Tuple3":
+            return function ($) {
+                 return updateScore(checkCollision(checkNextPipe(_v28._1)(A2(updatePipes,
+                 _v28._1,
+                 _v28._2)(A2(updateFlappy,
+                 _v28._1,
+                 _v28._0)($)))));
+              };}
+         _E.Case($moduleName,
+         "on line 120, column 26 to 116");
+      }();
+   };
+   var handle = F2(function (signals,
+   game) {
+      return game.collide ? game : A2(runGame,
+      signals,
+      game);
+   });
+   var renderPipes = function (game) {
+      return A2(Graphics.Collage.collage,
+      width,
+      height)(A2(List.map,
+      renderPipe,
+      game.pipes));
+   };
+   var render = function (game) {
+      return function () {
+         var world = A3(Graphics.Collage.collage,
+         width,
+         height,
+         _J.toList([Graphics.Collage.filled(skyBlue)(A2(Graphics.Collage.rect,
+                   fwidth,
+                   fheight))
+                   ,Graphics.Collage.moveY(0 - halfHeight + dirtHeight / 2)(Graphics.Collage.filled(dirtBrown)(A2(Graphics.Collage.rect,
+                   fwidth,
+                   dirtHeight)))
+                   ,renderGround
+                   ,Graphics.Collage.toForm(renderPipes(game))
+                   ,renderFlappy(game)
+                   ,Graphics.Collage.move({ctor: "_Tuple2"
+                                          ,_0: 340
+                                          ,_1: 300})(Graphics.Collage.toForm(A2(txt,
+                   function ($) {
+                      return Text.bold(Text.height(60)($));
+                   },
+                   game.score)))]));
+         return A4(Graphics.Element.container,
+         width,
+         height,
+         Graphics.Element.middle,
+         world);
+      }();
+   };
+   var gameFps = 100;
+   var delta = A2(Signal._op["<~"],
+   Time.inSeconds,
+   Time.fps(gameFps));
+   var inputSignal = A2(Signal.sampleOn,
+   delta,
+   A2(Signal._op["~"],
+   A2(Signal._op["~"],
+   A2(Signal._op["<~"],
+   F3(function (v0,v1,v2) {
+      return {ctor: "_Tuple3"
+             ,_0: v0
+             ,_1: v1
+             ,_2: v2};
+   }),
+   Keyboard.arrows),
+   delta),
+   A3(Random.range,
+   pipeHeightMin,
+   pipeHeightMax,
+   delta)));
+   var mainSignal = A3(Signal.foldp,
+   handle,
+   game,
+   inputSignal);
+   var main = A2(Signal._op["<~"],
+   render,
+   mainSignal);
+   _elm.Main.values = {_op: _op
+                      ,gameFps: gameFps
+                      ,height: height
+                      ,width: width
+                      ,fheight: fheight
+                      ,fwidth: fwidth
+                      ,halfHeight: halfHeight
+                      ,halfWidth: halfWidth
+                      ,worldVx: worldVx
+                      ,pipeHeightMax: pipeHeightMax
+                      ,pipeHeightMin: pipeHeightMin
+                      ,pipeHeight: pipeHeight
+                      ,pipeWidth: pipeWidth
+                      ,fPipeHeight: fPipeHeight
+                      ,fPipeWidth: fPipeWidth
+                      ,pipeGap: pipeGap
+                      ,dirtHeight: dirtHeight
+                      ,groundHeight: groundHeight
+                      ,groundOffsetY: groundOffsetY
+                      ,allBottomHeight: allBottomHeight
+                      ,flappySize: flappySize
+                      ,halfFlappySize: halfFlappySize
+                      ,flappyMinY: flappyMinY
+                      ,flappyMaxY: flappyMaxY
+                      ,skyBlue: skyBlue
+                      ,groundGreen: groundGreen
+                      ,dirtBrown: dirtBrown
+                      ,pipeGreen: pipeGreen
+                      ,defaultFlappy: defaultFlappy
+                      ,game: game
+                      ,square: square
+                      ,renderFlappy: renderFlappy
+                      ,renderPipes: renderPipes
+                      ,renderPipe: renderPipe
+                      ,renderGround: renderGround
+                      ,render: render
+                      ,txt: txt
+                      ,handle: handle
+                      ,runGame: runGame
+                      ,jump: jump
+                      ,gravity: gravity
+                      ,physics: physics
+                      ,checkCollision: checkCollision
+                      ,isPipeCollision: isPipeCollision
+                      ,isCollision: isCollision
+                      ,mkCollisionRect: mkCollisionRect
+                      ,updateFlappy: updateFlappy
+                      ,checkNextPipe: checkNextPipe
+                      ,updatePipes: updatePipes
+                      ,addPipe: addPipe
+                      ,movePipes: movePipes
+                      ,cleanPipes: cleanPipes
+                      ,mkPipe: mkPipe
+                      ,updateScore: updateScore
+                      ,delta: delta
+                      ,inputSignal: inputSignal
+                      ,mainSignal: mainSignal
+                      ,main: main
+                      ,Point: Point
+                      ,Pipe: Pipe
+                      ,Flappy: Flappy
+                      ,Game: Game};
+   return _elm.Main.values;
+};</script></head><body><script type="text/javascript">Elm.fullscreen(Elm.Main)</script><noscript></noscript></body></html>
