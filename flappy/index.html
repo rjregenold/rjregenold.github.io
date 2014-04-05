@@ -65,7 +65,7 @@ Elm.Main.make = function (_elm) {
             switch ($.ctor)
             {case "_Tuple2": return $._1;}
             _E.Case($moduleName,
-            "on line 158, column 19 to 32");
+            "on line 188, column 19 to 32");
          }();
          var wait$ = wait + t;
          var addPipe = _U.cmp(wait$,
@@ -91,10 +91,10 @@ Elm.Main.make = function (_elm) {
                            ,_2: _v3._1 - _v4._1 / 2
                            ,_3: _v3._0 - _v4._0 / 2};}
                  _E.Case($moduleName,
-                 "on line 151, column 6 to 37");
+                 "on line 181, column 6 to 37");
               }();}
          _E.Case($moduleName,
-         "on line 151, column 6 to 37");
+         "on line 181, column 6 to 37");
       }();
    });
    var isCollision = F2(function (_v11,
@@ -111,15 +111,15 @@ Elm.Main.make = function (_elm) {
                       _v12._1) < 0 && _U.cmp(_v11._1,
                       _v12._3) > 0));}
                  _E.Case($moduleName,
-                 "on line 147, column 5 to 45");
+                 "on line 177, column 5 to 45");
               }();}
          _E.Case($moduleName,
-         "on line 147, column 5 to 45");
+         "on line 177, column 5 to 45");
       }();
    });
    var txt = function (f) {
       return function ($) {
-         return Text.centered(f(Text.monospace(Text.color(Color.white)(Text.toText(Prelude.show($))))));
+         return Text.centered(f(Text.monospace(Text.color(Color.white)(Text.toText($)))));
       };
    };
    var square = function (x) {
@@ -133,10 +133,10 @@ Elm.Main.make = function (_elm) {
    d,
    e) {
       return {_: {}
-             ,collide: c
-             ,flappy: a
+             ,flappy: b
+             ,gameState: a
              ,nextPipe: d
-             ,pipes: b
+             ,pipes: c
              ,score: e};
    });
    var Flappy = F4(function (a,
@@ -168,6 +168,27 @@ Elm.Main.make = function (_elm) {
    var Point = F2(function (a,b) {
       return {_: {},x: a,y: b};
    });
+   var GameOver = {ctor: "GameOver"};
+   var Playing = {ctor: "Playing"};
+   var checkPrefaceState = F2(function (_v23,
+   game) {
+      return function () {
+         return _U.cmp(_v23.y,
+         0) > 0 ? _U.replace([["gameState"
+                              ,Playing]],
+         game) : game;
+      }();
+   });
+   var runPreface = function (_v25) {
+      return function () {
+         switch (_v25.ctor)
+         {case "_Tuple3":
+            return checkPrefaceState(_v25._0);}
+         _E.Case($moduleName,
+         "on line 141, column 26 to 49");
+      }();
+   };
+   var Preface = {ctor: "Preface"};
    var pipeGreen = A3(Color.rgb,
    84,
    128,
@@ -242,10 +263,12 @@ Elm.Main.make = function (_elm) {
          {ctor: "_Tuple2"
          ,_0: flappySize
          ,_1: flappySize});
-         return _U.replace([["collide"
-                            ,List.any(Basics.id)(A2(List.map,
-                            isPipeCollision(flappyColRect),
-                            game.pipes))]],
+         var collide = List.any(Basics.id)(A2(List.map,
+         isPipeCollision(flappyColRect),
+         game.pipes));
+         var gameState$ = collide ? GameOver : game.gameState;
+         return _U.replace([["gameState"
+                            ,gameState$]],
          game);
       }();
    };
@@ -292,13 +315,13 @@ Elm.Main.make = function (_elm) {
       flappy) : flappy;
    });
    var flappyMaxY = halfHeight - halfFlappySize;
-   var jump = F2(function (_v23,
+   var jump = F2(function (_v30,
    flappy) {
       return function () {
          return _U.cmp(flappy.y,
          flappyMaxY) > -1 ? _U.replace([["vy"
                                         ,0]],
-         flappy) : _U.cmp(_v23.y,
+         flappy) : _U.cmp(_v30.y,
          0) > 0 ? _U.replace([["vy"
                               ,400]],
          flappy) : flappy;
@@ -335,11 +358,11 @@ Elm.Main.make = function (_elm) {
    var defaultFlappy = A4(Flappy,
    0,
    0 - worldVx,
-   halfHeight,
+   halfHeight / 2,
    Basics.toFloat(0));
    var game = {_: {}
-              ,collide: false
               ,flappy: defaultFlappy
+              ,gameState: Preface
               ,nextPipe: {ctor: "_Tuple2"
                          ,_0: true
                          ,_1: 0}
@@ -377,7 +400,7 @@ Elm.Main.make = function (_elm) {
             switch ($.ctor)
             {case "_Tuple2": return $._0;}
             _E.Case($moduleName,
-            "on line 167, column 24 to 37");
+            "on line 197, column 24 to 37");
          }();
          return Basics.fst(game.nextPipe) ? {ctor: "::"
                                             ,_0: mkPipe(next)
@@ -393,26 +416,36 @@ Elm.Main.make = function (_elm) {
                          }(game)]],
       game);
    });
-   var runGame = function (_v28) {
+   var runGame = function (_v35) {
       return function () {
-         switch (_v28.ctor)
+         switch (_v35.ctor)
          {case "_Tuple3":
             return function ($) {
-                 return updateScore(checkCollision(checkNextPipe(_v28._1)(A2(updatePipes,
-                 _v28._1,
-                 _v28._2)(A2(updateFlappy,
-                 _v28._1,
-                 _v28._0)($)))));
+                 return updateScore(checkCollision(checkNextPipe(_v35._1)(A2(updatePipes,
+                 _v35._1,
+                 _v35._2)(A2(updateFlappy,
+                 _v35._1,
+                 _v35._0)($)))));
               };}
          _E.Case($moduleName,
-         "on line 120, column 26 to 116");
+         "on line 148, column 26 to 116");
       }();
    };
    var handle = F2(function (signals,
    game) {
-      return game.collide ? game : A2(runGame,
-      signals,
-      game);
+      return function () {
+         var _v40 = game.gameState;
+         switch (_v40.ctor)
+         {case "GameOver": return game;
+            case "Playing":
+            return A2(runGame,signals,game);
+            case "Preface":
+            return A2(runPreface,
+              signals,
+              game);}
+         _E.Case($moduleName,
+         "between lines 136 and 139");
+      }();
    });
    var renderPipes = function (game) {
       return A2(Graphics.Collage.collage,
@@ -421,7 +454,33 @@ Elm.Main.make = function (_elm) {
       renderPipe,
       game.pipes));
    };
-   var render = function (game) {
+   var renderPreface = function (game) {
+      return function () {
+         var lbl = A2(txt,
+         Text.height(30),
+         "press the up arrow to start.");
+         return A4(Graphics.Element.container,
+         width,
+         height,
+         Graphics.Element.middle,
+         lbl);
+      }();
+   };
+   var renderGameOver = function (game) {
+      return function () {
+         var msg = _U.eq(game.score,
+         0) ? "such fail." : "game over.";
+         var lbl = A2(txt,
+         Text.height(30),
+         msg);
+         return A4(Graphics.Element.container,
+         width,
+         height,
+         Graphics.Element.middle,
+         lbl);
+      }();
+   };
+   var renderWorld = function (game) {
       return function () {
          var world = A3(Graphics.Collage.collage,
          width,
@@ -441,12 +500,28 @@ Elm.Main.make = function (_elm) {
                    function ($) {
                       return Text.bold(Text.height(60)($));
                    },
-                   game.score)))]));
+                   Prelude.show(game.score))))]));
          return A4(Graphics.Element.container,
          width,
          height,
          Graphics.Element.middle,
          world);
+      }();
+   };
+   var render = function (game) {
+      return function () {
+         var _v41 = game.gameState;
+         switch (_v41.ctor)
+         {case "GameOver":
+            return Graphics.Element.layers(_J.toList([renderWorld(game)
+                                                     ,renderGameOver(game)]));
+            case "Playing":
+            return renderWorld(game);
+            case "Preface":
+            return Graphics.Element.layers(_J.toList([renderWorld(game)
+                                                     ,renderPreface(game)]));}
+         _E.Case($moduleName,
+         "between lines 104 and 107");
       }();
    };
    var gameFps = 100;
@@ -513,8 +588,13 @@ Elm.Main.make = function (_elm) {
                       ,renderPipe: renderPipe
                       ,renderGround: renderGround
                       ,render: render
+                      ,renderPreface: renderPreface
+                      ,renderGameOver: renderGameOver
+                      ,renderWorld: renderWorld
                       ,txt: txt
                       ,handle: handle
+                      ,runPreface: runPreface
+                      ,checkPrefaceState: checkPrefaceState
                       ,runGame: runGame
                       ,jump: jump
                       ,gravity: gravity
@@ -535,6 +615,9 @@ Elm.Main.make = function (_elm) {
                       ,inputSignal: inputSignal
                       ,mainSignal: mainSignal
                       ,main: main
+                      ,Preface: Preface
+                      ,Playing: Playing
+                      ,GameOver: GameOver
                       ,Point: Point
                       ,Pipe: Pipe
                       ,Flappy: Flappy
